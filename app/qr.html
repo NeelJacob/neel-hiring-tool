@@ -1,175 +1,196 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Neel Hiring Tool - QR Generator</title>
-  <style>
-    body {
-      font-family: Arial;
-      max-width: 760px;
-      margin: 24px auto;
-      padding: 0 12px;
-      text-align: center;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      text-align: left;
-    }
-    .row2 {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    button,
-    a.btn {
-      padding: 10px 14px;
-      cursor: pointer;
-      display: inline-block;
-      text-decoration: none;
-      border: 1px solid #ccc;
-      background: #fff;
-      color: #000;
-    }
-    .card {
-      border: 1px solid #eee;
-      border-radius: 12px;
-      padding: 18px;
-      margin-top: 18px;
-    }
-    .muted {
-      opacity: 0.75;
-      font-size: 13px;
-    }
-    .linkbox {
-      width: 100%;
-      padding: 10px;
-      box-sizing: border-box;
-      margin: 12px 0;
-      font-size: 14px;
-    }
-    #qrcode {
-      margin-top: 18px;
-      display: flex;
-      justify-content: center;
-    }
-    #qrcode img,
-    #qrcode canvas {
-      max-width: 100%;
-      height: auto;
-      border: 1px solid #eee;
-      padding: 10px;
-      background: #fff;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="topbar">
-    <div>
-      <div style="font-weight:700;font-size:18px">Neel Hiring Tool</div>
-      <div class="muted">QR generator for candidate applications</div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Neel Hiring Tool - QR Generator</title>
+    <style>
+      body {
+        font-family: Arial;
+        max-width: 760px;
+        margin: 24px auto;
+        padding: 0 12px;
+        text-align: center;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        text-align: left;
+      }
+      .row2 {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      button,
+      a.btn {
+        padding: 10px 14px;
+        cursor: pointer;
+        display: inline-block;
+        text-decoration: none;
+        border: 1px solid #ccc;
+        background: #fff;
+        color: #000;
+      }
+      .card {
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 18px;
+        margin-top: 18px;
+      }
+      .muted {
+        opacity: 0.75;
+        font-size: 13px;
+      }
+      .linkbox {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        margin: 12px 0;
+        font-size: 14px;
+      }
+      #qrcode {
+        margin-top: 18px;
+        display: flex;
+        justify-content: center;
+      }
+      #qrcode img,
+      #qrcode canvas {
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #eee;
+        padding: 10px;
+        background: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      style="
+        background: #fff3cd;
+        border-bottom: 1px solid #ffe69c;
+        padding: 10px;
+        text-align: center;
+        font-size: 14px;
+        position: sticky;
+        top: 0;
+        z-index: 9999;
+      "
+    >
+      ⚠️ <strong>Beta Version</strong> — This system is currently in testing.
+      Please use <strong>dummy candidate data only</strong>.
     </div>
 
-    <div class="row2">
-      <a class="btn" href="./candidates-list.html">Candidates</a>
-      <a class="btn" href="./submissions.html">New applications</a>
-      <button id="logoutBtn" type="button">Logout</button>
-    </div>
-  </div>
+    <div class="topbar">
+      <div>
+        <div style="font-weight: 700; font-size: 18px">Neel Hiring Tool</div>
+        <div class="muted">QR generator for candidate applications</div>
+      </div>
 
-  <div class="card">
-    <h2 style="margin-top:0;">Candidate Apply QR</h2>
-    <p class="muted">
-      Share this QR code with candidates. When they scan it, they will open the public application form.
-    </p>
-
-    <input id="applyLink" class="linkbox" readonly placeholder="Application link" />
-
-    <div class="row2" style="justify-content:center;">
-      <button id="copyBtn" type="button">Copy link</button>
-      <button id="openBtn" type="button">Open apply page</button>
-      <button id="printBtn" type="button">Print QR</button>
+      <div class="row2">
+        <a class="btn" href="./candidates-list.html">Candidates</a>
+        <a class="btn" href="./submissions.html">New applications</a>
+        <button id="logoutBtn" type="button">Logout</button>
+      </div>
     </div>
 
-    <div id="qrcode"></div>
+    <div class="card">
+      <h2 style="margin-top: 0">Candidate Apply QR</h2>
+      <p class="muted">
+        Share this QR code with candidates. When they scan it, they will open
+        the public application form.
+      </p>
 
-    <p id="msg" class="muted"></p>
-  </div>
+      <input
+        id="applyLink"
+        class="linkbox"
+        readonly
+        placeholder="Application link"
+      />
 
-  <script type="module">
-    import { supabase } from "./supabaseClient.js";
-    import QRCode from "https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm";
+      <div class="row2" style="justify-content: center">
+        <button id="copyBtn" type="button">Copy link</button>
+        <button id="openBtn" type="button">Open apply page</button>
+        <button id="printBtn" type="button">Print QR</button>
+      </div>
 
-    const authStatus = { textContent: "" }; // simple placeholder if needed later
-    const msg = document.getElementById("msg");
-    const applyLinkEl = document.getElementById("applyLink");
-    const qrcodeEl = document.getElementById("qrcode");
+      <div id="qrcode"></div>
 
-    async function requireSession() {
-      const { data, error } = await supabase.auth.getSession();
+      <p id="msg" class="muted"></p>
+    </div>
 
-      if (error || !data?.session) {
+    <script type="module">
+      import { supabase } from "./supabaseClient.js";
+      import QRCode from "https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm";
+
+      const authStatus = { textContent: "" }; // simple placeholder if needed later
+      const msg = document.getElementById("msg");
+      const applyLinkEl = document.getElementById("applyLink");
+      const qrcodeEl = document.getElementById("qrcode");
+
+      async function requireSession() {
+        const { data, error } = await supabase.auth.getSession();
+
+        if (error || !data?.session) {
+          window.location.href = "auth.html";
+          return null;
+        }
+
+        return data.session;
+      }
+
+      document.getElementById("logoutBtn").onclick = async () => {
+        await supabase.auth.signOut();
         window.location.href = "auth.html";
-        return null;
+      };
+
+      function getApplyUrl() {
+        const url = new URL("./apply.html", window.location.href);
+        return url.href;
       }
 
-      return data.session;
-    }
+      async function generateQr() {
+        const applyUrl = getApplyUrl();
+        applyLinkEl.value = applyUrl;
 
-    document.getElementById("logoutBtn").onclick = async () => {
-      await supabase.auth.signOut();
-      window.location.href = "auth.html";
-    };
+        qrcodeEl.innerHTML = "";
 
-    function getApplyUrl() {
-      const url = new URL("./apply.html", window.location.href);
-      return url.href;
-    }
-
-    async function generateQr() {
-      const applyUrl = getApplyUrl();
-      applyLinkEl.value = applyUrl;
-
-      qrcodeEl.innerHTML = "";
-
-      try {
-        const canvas = document.createElement("canvas");
-        await QRCode.toCanvas(canvas, applyUrl, {
-          width: 260,
-          margin: 2
-        });
-        qrcodeEl.appendChild(canvas);
-        msg.textContent = "✅ QR code ready.";
-      } catch (err) {
-        console.error(err);
-        msg.textContent = "❌ Failed to generate QR code.";
+        try {
+          const canvas = document.createElement("canvas");
+          await QRCode.toCanvas(canvas, applyUrl, {
+            width: 260,
+            margin: 2,
+          });
+          qrcodeEl.appendChild(canvas);
+          msg.textContent = "✅ QR code ready.";
+        } catch (err) {
+          console.error(err);
+          msg.textContent = "❌ Failed to generate QR code.";
+        }
       }
-    }
 
-    document.getElementById("copyBtn").onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(applyLinkEl.value);
-        msg.textContent = "✅ Link copied.";
-      } catch {
-        msg.textContent = "❌ Could not copy link.";
-      }
-    };
+      document.getElementById("copyBtn").onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(applyLinkEl.value);
+          msg.textContent = "✅ Link copied.";
+        } catch {
+          msg.textContent = "❌ Could not copy link.";
+        }
+      };
 
-    document.getElementById("openBtn").onclick = () => {
-      window.open(applyLinkEl.value, "_blank");
-    };
+      document.getElementById("openBtn").onclick = () => {
+        window.open(applyLinkEl.value, "_blank");
+      };
 
-    document.getElementById("printBtn").onclick = () => {
-      window.print();
-    };
+      document.getElementById("printBtn").onclick = () => {
+        window.print();
+      };
 
-    await requireSession();
-    await generateQr();
-  </script>
-</body>
+      await requireSession();
+      await generateQr();
+    </script>
+  </body>
 </html>

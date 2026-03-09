@@ -1,271 +1,288 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Neel Hiring Tool - Pipeline</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Neel Hiring Tool - Pipeline</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f7f7f8;
-      color: #111;
-    }
-
-    .wrap {
-      max-width: 1400px;
-      margin: 24px auto;
-      padding: 0 16px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .title {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .muted {
-      color: #666;
-      font-size: 13px;
-    }
-
-    .row2 {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    button,
-    a.btn {
-      padding: 10px 14px;
-      border: 1px solid #ccc;
-      background: #fff;
-      color: #111;
-      text-decoration: none;
-      cursor: pointer;
-      border-radius: 8px;
-    }
-
-    .msg {
-      margin: 12px 0 18px;
-      font-size: 14px;
-    }
-
-    .board {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(220px, 1fr));
-      gap: 14px;
-      align-items: start;
-      overflow-x: auto;
-    }
-
-    .column {
-      background: #fff;
-      border: 1px solid #e6e6e6;
-      border-radius: 12px;
-      min-height: 420px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .column.drag-over {
-      outline: 2px dashed #333;
-      background: #fafafa;
-    }
-
-    .column-head {
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-      position: sticky;
-      top: 0;
-      background: #fff;
-      border-radius: 12px 12px 0 0;
-      z-index: 1;
-    }
-
-    .column-title {
-      font-weight: 700;
-      font-size: 15px;
-    }
-
-    .count {
-      font-size: 12px;
-      color: #666;
-      margin-top: 4px;
-    }
-
-    .card-list {
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 120px;
-      flex: 1;
-    }
-
-    .card {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 12px;
-      cursor: grab;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-
-    .card.dragging {
-      opacity: 0.55;
-      cursor: grabbing;
-    }
-
-    .card-name {
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .card-line {
-      font-size: 13px;
-      color: #444;
-      margin: 3px 0;
-      word-break: break-word;
-    }
-
-    .card-actions {
-      margin-top: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .small-btn {
-      padding: 6px 9px;
-      font-size: 12px;
-      border-radius: 6px;
-    }
-
-    .empty {
-      color: #888;
-      font-size: 13px;
-      padding: 8px 0;
-    }
-
-    @media (max-width: 1200px) {
-      .board {
-        grid-template-columns: repeat(3, minmax(240px, 1fr));
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #f7f7f8;
+        color: #111;
       }
-    }
 
-    @media (max-width: 760px) {
-      .board {
-        grid-template-columns: 1fr;
+      .wrap {
+        max-width: 1400px;
+        margin: 24px auto;
+        padding: 0 16px;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="topbar">
-      <div>
-        <div class="title">Neel Hiring Tool</div>
-        <div class="muted">Drag candidates between hiring stages</div>
-        <div id="authStatus" class="muted">Checking session…</div>
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+
+      .title {
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .muted {
+        color: #666;
+        font-size: 13px;
+      }
+
+      .row2 {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      button,
+      a.btn {
+        padding: 10px 14px;
+        border: 1px solid #ccc;
+        background: #fff;
+        color: #111;
+        text-decoration: none;
+        cursor: pointer;
+        border-radius: 8px;
+      }
+
+      .msg {
+        margin: 12px 0 18px;
+        font-size: 14px;
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(220px, 1fr));
+        gap: 14px;
+        align-items: start;
+        overflow-x: auto;
+      }
+
+      .column {
+        background: #fff;
+        border: 1px solid #e6e6e6;
+        border-radius: 12px;
+        min-height: 420px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .column.drag-over {
+        outline: 2px dashed #333;
+        background: #fafafa;
+      }
+
+      .column-head {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        position: sticky;
+        top: 0;
+        background: #fff;
+        border-radius: 12px 12px 0 0;
+        z-index: 1;
+      }
+
+      .column-title {
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      .count {
+        font-size: 12px;
+        color: #666;
+        margin-top: 4px;
+      }
+
+      .card-list {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 120px;
+        flex: 1;
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 12px;
+        cursor: grab;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      .card.dragging {
+        opacity: 0.55;
+        cursor: grabbing;
+      }
+
+      .card-name {
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .card-line {
+        font-size: 13px;
+        color: #444;
+        margin: 3px 0;
+        word-break: break-word;
+      }
+
+      .card-actions {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .small-btn {
+        padding: 6px 9px;
+        font-size: 12px;
+        border-radius: 6px;
+      }
+
+      .empty {
+        color: #888;
+        font-size: 13px;
+        padding: 8px 0;
+      }
+
+      @media (max-width: 1200px) {
+        .board {
+          grid-template-columns: repeat(3, minmax(240px, 1fr));
+        }
+      }
+
+      @media (max-width: 760px) {
+        .board {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      style="
+        background: #fff3cd;
+        border-bottom: 1px solid #ffe69c;
+        padding: 10px;
+        text-align: center;
+        font-size: 14px;
+        position: sticky;
+        top: 0;
+        z-index: 9999;
+      "
+    >
+      ⚠️ <strong>Beta Version</strong> — This system is currently in testing.
+      Please use <strong>dummy candidate data only</strong>.
+    </div>
+    <div class="wrap">
+      <div class="topbar">
+        <div>
+          <div class="title">Neel Hiring Tool</div>
+          <div class="muted">Drag candidates between hiring stages</div>
+          <div id="authStatus" class="muted">Checking session…</div>
+        </div>
+
+        <div class="row2">
+          <a class="btn" href="./candidates-list.html">Candidates</a>
+          <a class="btn" href="./submissions.html">New applications</a>
+          <a class="btn" href="./qr.html">Generate QR</a>
+          <button id="refreshBtn">Refresh</button>
+          <button id="logoutBtn">Logout</button>
+        </div>
       </div>
 
-      <div class="row2">
-        <a class="btn" href="./candidates-list.html">Candidates</a>
-        <a class="btn" href="./submissions.html">New applications</a>
-        <a class="btn" href="./qr.html">Generate QR</a>
-        <button id="refreshBtn">Refresh</button>
-        <button id="logoutBtn">Logout</button>
-      </div>
+      <div id="msg" class="msg"></div>
+
+      <div class="board" id="board"></div>
     </div>
 
-    <div id="msg" class="msg"></div>
+    <script type="module">
+      import { supabase } from "./supabaseClient.js";
 
-    <div class="board" id="board"></div>
-  </div>
+      const STATUSES = [
+        "Applied",
+        "Screening",
+        "Interview",
+        "Offer",
+        "Hired",
+        "Rejected",
+      ];
 
-  <script type="module">
-    import { supabase } from "./supabaseClient.js";
+      const board = document.getElementById("board");
+      const msg = document.getElementById("msg");
+      const authStatus = document.getElementById("authStatus");
 
-    const STATUSES = [
-      "Applied",
-      "Screening",
-      "Interview",
-      "Offer",
-      "Hired",
-      "Rejected"
-    ];
+      let all = [];
+      let draggedCandidateId = null;
 
-    const board = document.getElementById("board");
-    const msg = document.getElementById("msg");
-    const authStatus = document.getElementById("authStatus");
-
-    let all = [];
-    let draggedCandidateId = null;
-
-    document.getElementById("logoutBtn").onclick = async () => {
-      await supabase.auth.signOut();
-      window.location.href = "auth.html";
-    };
-
-    document.getElementById("refreshBtn").onclick = async () => {
-      await load();
-    };
-
-    function safe(s) {
-      return (s ?? "").toString();
-    }
-
-    function escapeHtml(str) {
-      return safe(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function fmtDate(iso) {
-      try {
-        return iso ? new Date(iso).toLocaleString() : "";
-      } catch {
-        return iso || "";
-      }
-    }
-
-    async function requireSession() {
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error || !data?.session) {
+      document.getElementById("logoutBtn").onclick = async () => {
+        await supabase.auth.signOut();
         window.location.href = "auth.html";
-        return null;
+      };
+
+      document.getElementById("refreshBtn").onclick = async () => {
+        await load();
+      };
+
+      function safe(s) {
+        return (s ?? "").toString();
       }
 
-      authStatus.textContent = `Logged in as: ${data.session.user.email}`;
-      return data.session;
-    }
+      function escapeHtml(str) {
+        return safe(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
 
-    function buildBoard() {
-      board.innerHTML = "";
+      function fmtDate(iso) {
+        try {
+          return iso ? new Date(iso).toLocaleString() : "";
+        } catch {
+          return iso || "";
+        }
+      }
 
-      for (const status of STATUSES) {
-        const candidates = all.filter(c => (c.status || "Applied") === status);
+      async function requireSession() {
+        const { data, error } = await supabase.auth.getSession();
 
-        const col = document.createElement("div");
-        col.className = "column";
-        col.dataset.status = status;
+        if (error || !data?.session) {
+          window.location.href = "auth.html";
+          return null;
+        }
 
-        col.innerHTML = `
+        authStatus.textContent = `Logged in as: ${data.session.user.email}`;
+        return data.session;
+      }
+
+      function buildBoard() {
+        board.innerHTML = "";
+
+        for (const status of STATUSES) {
+          const candidates = all.filter(
+            (c) => (c.status || "Applied") === status,
+          );
+
+          const col = document.createElement("div");
+          col.className = "column";
+          col.dataset.status = status;
+
+          col.innerHTML = `
           <div class="column-head">
             <div class="column-title">${escapeHtml(status)}</div>
             <div class="count">${candidates.length} candidate${candidates.length === 1 ? "" : "s"}</div>
@@ -273,7 +290,9 @@
           <div class="card-list" data-dropzone="${escapeHtml(status)}">
             ${
               candidates.length
-                ? candidates.map(c => `
+                ? candidates
+                    .map(
+                      (c) => `
                   <div class="card" draggable="true" data-id="${escapeHtml(c.id)}">
                     <div class="card-name">${escapeHtml(c.full_name || "Unnamed Candidate")}</div>
                     <div class="card-line">${escapeHtml(c.email || "No email")}</div>
@@ -287,168 +306,172 @@
                       <button class="small-btn" data-edit="${escapeHtml(c.id)}">Quick Edit</button>
                     </div>
                   </div>
-                `).join("")
+                `,
+                    )
+                    .join("")
                 : `<div class="empty">No candidates in this stage</div>`
             }
           </div>
         `;
 
-        board.appendChild(col);
+          board.appendChild(col);
+        }
+
+        wireDragAndDrop();
       }
 
-      wireDragAndDrop();
-    }
+      function wireDragAndDrop() {
+        const cards = document.querySelectorAll(".card");
+        const columns = document.querySelectorAll(".column");
 
-    function wireDragAndDrop() {
-      const cards = document.querySelectorAll(".card");
-      const columns = document.querySelectorAll(".column");
+        cards.forEach((card) => {
+          card.addEventListener("dragstart", () => {
+            draggedCandidateId = card.dataset.id;
+            card.classList.add("dragging");
+          });
 
-      cards.forEach(card => {
-        card.addEventListener("dragstart", () => {
-          draggedCandidateId = card.dataset.id;
-          card.classList.add("dragging");
+          card.addEventListener("dragend", () => {
+            card.classList.remove("dragging");
+            draggedCandidateId = null;
+            columns.forEach((c) => c.classList.remove("drag-over"));
+          });
         });
 
-        card.addEventListener("dragend", () => {
-          card.classList.remove("dragging");
-          draggedCandidateId = null;
-          columns.forEach(c => c.classList.remove("drag-over"));
+        columns.forEach((column) => {
+          column.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            column.classList.add("drag-over");
+          });
+
+          column.addEventListener("dragleave", () => {
+            column.classList.remove("drag-over");
+          });
+
+          column.addEventListener("drop", async (e) => {
+            e.preventDefault();
+            column.classList.remove("drag-over");
+
+            const newStatus = column.dataset.status;
+            if (!draggedCandidateId || !newStatus) return;
+
+            const candidate = all.find(
+              (c) => String(c.id) === String(draggedCandidateId),
+            );
+            if (!candidate) return;
+
+            const oldStatus = candidate.status || "Applied";
+            if (oldStatus === newStatus) return;
+
+            await moveCandidate(draggedCandidateId, newStatus);
+          });
         });
-      });
-
-      columns.forEach(column => {
-        column.addEventListener("dragover", (e) => {
-          e.preventDefault();
-          column.classList.add("drag-over");
-        });
-
-        column.addEventListener("dragleave", () => {
-          column.classList.remove("drag-over");
-        });
-
-        column.addEventListener("drop", async (e) => {
-          e.preventDefault();
-          column.classList.remove("drag-over");
-
-          const newStatus = column.dataset.status;
-          if (!draggedCandidateId || !newStatus) return;
-
-          const candidate = all.find(c => String(c.id) === String(draggedCandidateId));
-          if (!candidate) return;
-
-          const oldStatus = candidate.status || "Applied";
-          if (oldStatus === newStatus) return;
-
-          await moveCandidate(draggedCandidateId, newStatus);
-        });
-      });
-    }
-
-    async function moveCandidate(id, newStatus) {
-      msg.textContent = `Moving candidate to ${newStatus}...`;
-
-      const { error } = await supabase
-        .from("candidates")
-        .update({ status: newStatus })
-        .eq("id", id);
-
-      if (error) {
-        msg.textContent = "❌ " + error.message;
-        return;
       }
 
-      const candidate = all.find(c => String(c.id) === String(id));
-      if (candidate) candidate.status = newStatus;
+      async function moveCandidate(id, newStatus) {
+        msg.textContent = `Moving candidate to ${newStatus}...`;
 
-      buildBoard();
-      msg.textContent = `✅ Candidate moved to ${newStatus}`;
-    }
+        const { error } = await supabase
+          .from("candidates")
+          .update({ status: newStatus })
+          .eq("id", id);
 
-    async function load() {
-      const session = await requireSession();
-      if (!session) return;
+        if (error) {
+          msg.textContent = "❌ " + error.message;
+          return;
+        }
 
-      msg.textContent = "Loading pipeline...";
+        const candidate = all.find((c) => String(c.id) === String(id));
+        if (candidate) candidate.status = newStatus;
 
-      const { data, error } = await supabase
-        .from("candidates")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(500);
-
-      if (error) {
-        msg.textContent = "❌ " + error.message;
-        all = [];
         buildBoard();
-        return;
+        msg.textContent = `✅ Candidate moved to ${newStatus}`;
       }
 
-      all = data ?? [];
-      buildBoard();
-      msg.textContent = `✅ Loaded ${all.length} candidates`;
-    }
+      async function load() {
+        const session = await requireSession();
+        if (!session) return;
 
-    async function quickEditCandidate(id) {
-      const c = all.find(x => String(x.id) === String(id));
+        msg.textContent = "Loading pipeline...";
 
-      if (!c) {
-        msg.textContent = "❌ Candidate not found.";
-        return;
+        const { data, error } = await supabase
+          .from("candidates")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(500);
+
+        if (error) {
+          msg.textContent = "❌ " + error.message;
+          all = [];
+          buildBoard();
+          return;
+        }
+
+        all = data ?? [];
+        buildBoard();
+        msg.textContent = `✅ Loaded ${all.length} candidates`;
       }
 
-      const ask = (label, current) => {
-        const r = prompt(label, current ?? "");
-        if (r === null) return null;
-        return r.trim();
-      };
+      async function quickEditCandidate(id) {
+        const c = all.find((x) => String(x.id) === String(id));
 
-      const full_name = ask("Full name", c.full_name);
-      if (full_name === null) return;
+        if (!c) {
+          msg.textContent = "❌ Candidate not found.";
+          return;
+        }
 
-      const email = ask("Email", c.email);
-      if (email === null) return;
+        const ask = (label, current) => {
+          const r = prompt(label, current ?? "");
+          if (r === null) return null;
+          return r.trim();
+        };
 
-      const phone = ask("Phone", c.phone);
-      if (phone === null) return;
+        const full_name = ask("Full name", c.full_name);
+        if (full_name === null) return;
 
-      const skills = ask("Skills", c.skills);
-      if (skills === null) return;
+        const email = ask("Email", c.email);
+        if (email === null) return;
 
-      const notes = ask("Recruiter notes", c.notes);
-      if (notes === null) return;
+        const phone = ask("Phone", c.phone);
+        if (phone === null) return;
 
-      msg.textContent = "Updating candidate...";
+        const skills = ask("Skills", c.skills);
+        if (skills === null) return;
 
-      const { error } = await supabase
-        .from("candidates")
-        .update({
-          full_name,
-          email: email || null,
-          phone: phone || null,
-          skills: skills || null,
-          notes: notes || null
-        })
-        .eq("id", id);
+        const notes = ask("Recruiter notes", c.notes);
+        if (notes === null) return;
 
-      if (error) {
-        msg.textContent = "❌ " + error.message;
-        return;
+        msg.textContent = "Updating candidate...";
+
+        const { error } = await supabase
+          .from("candidates")
+          .update({
+            full_name,
+            email: email || null,
+            phone: phone || null,
+            skills: skills || null,
+            notes: notes || null,
+          })
+          .eq("id", id);
+
+        if (error) {
+          msg.textContent = "❌ " + error.message;
+          return;
+        }
+
+        msg.textContent = "✅ Candidate updated";
+        await load();
       }
 
-      msg.textContent = "✅ Candidate updated";
-      await load();
-    }
+      function viewCandidate(id) {
+        const c = all.find((x) => String(x.id) === String(id));
 
-    function viewCandidate(id) {
-      const c = all.find(x => String(x.id) === String(id));
+        if (!c) {
+          msg.textContent = "❌ Candidate not found.";
+          return;
+        }
 
-      if (!c) {
-        msg.textContent = "❌ Candidate not found.";
-        return;
-      }
-
-      alert(
-`Name: ${safe(c.full_name) || "—"}
+        alert(
+          `Name: ${safe(c.full_name) || "—"}
 
 Email: ${safe(c.email) || "—"}
 Phone: ${safe(c.phone) || "—"}
@@ -461,20 +484,20 @@ Languages: ${safe(c.languages) || "—"}
 Experience: ${safe(c.prior_experience) || "—"}
 
 Notes:
-${safe(c.notes) || "—"}`
-      );
-    }
+${safe(c.notes) || "—"}`,
+        );
+      }
 
-    board.addEventListener("click", (e) => {
-      const viewBtn = e.target.closest("button[data-view]");
-      if (viewBtn) return viewCandidate(viewBtn.dataset.view);
+      board.addEventListener("click", (e) => {
+        const viewBtn = e.target.closest("button[data-view]");
+        if (viewBtn) return viewCandidate(viewBtn.dataset.view);
 
-      const editBtn = e.target.closest("button[data-edit]");
-      if (editBtn) return quickEditCandidate(editBtn.dataset.edit);
-    });
+        const editBtn = e.target.closest("button[data-edit]");
+        if (editBtn) return quickEditCandidate(editBtn.dataset.edit);
+      });
 
-    await requireSession();
-    await load();
-  </script>
-</body>
+      await requireSession();
+      await load();
+    </script>
+  </body>
 </html>

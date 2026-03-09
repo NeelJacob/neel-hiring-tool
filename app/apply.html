@@ -49,7 +49,22 @@
   </head>
 
   <body>
-    <h2 style="margin-bottom: 4px;">Apply Now</h2>
+    <div
+      style="
+        background: #fff3cd;
+        border-bottom: 1px solid #ffe69c;
+        padding: 10px;
+        text-align: center;
+        font-size: 14px;
+        position: sticky;
+        top: 0;
+        z-index: 9999;
+      "
+    >
+      ⚠️ This is a test application form. Please upload a
+      <strong>dummy CV only</strong>.
+    </div>
+    <h2 style="margin-bottom: 4px">Apply Now</h2>
     <div class="small">Fill in your details and submit your application.</div>
 
     <div class="row">
@@ -77,7 +92,10 @@
     <div class="row">
       <div>
         <label for="qualification">Qualification</label>
-        <input id="qualification" placeholder="e.g., BEng Software Engineering" />
+        <input
+          id="qualification"
+          placeholder="e.g., BEng Software Engineering"
+        />
       </div>
       <div>
         <label for="place_of_birth">Place of birth</label>
@@ -98,12 +116,20 @@
 
     <div>
       <label for="prior_experience">Prior experience</label>
-      <textarea id="prior_experience" rows="3" placeholder="Any work history…"></textarea>
+      <textarea
+        id="prior_experience"
+        rows="3"
+        placeholder="Any work history…"
+      ></textarea>
     </div>
 
     <div>
       <label for="notes">Anything else you'd like to add?</label>
-      <textarea id="notes" rows="3" placeholder="Tell us anything important…"></textarea>
+      <textarea
+        id="notes"
+        rows="3"
+        placeholder="Tell us anything important…"
+      ></textarea>
     </div>
 
     <div>
@@ -201,11 +227,13 @@
           prior_experience: val("prior_experience") || null,
           notes: val("notes") || null,
           visa_status: val("visa_status") || null,
-          uk_residency_start: document.getElementById("uk_residency_start")?.value || null,
+          uk_residency_start:
+            document.getElementById("uk_residency_start")?.value || null,
           postcode: val("postcode") || null,
-          consent_to_share: document.getElementById("consent_to_share")?.value === "true",
+          consent_to_share:
+            document.getElementById("consent_to_share")?.value === "true",
           status: "Applied",
-          cv_file_path: cvFilePath
+          cv_file_path: cvFilePath,
         };
 
         const { error } = await supabase

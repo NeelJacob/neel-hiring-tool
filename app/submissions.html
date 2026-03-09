@@ -1,232 +1,258 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Neel Hiring Tool - Submissions</title>
-  <style>
-    body {
-      font-family: Arial;
-      max-width: 980px;
-      margin: 24px auto;
-      padding: 0 12px;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0 14px;
-      box-sizing: border-box;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border-bottom: 1px solid #eee;
-      padding: 10px;
-      text-align: left;
-      vertical-align: top;
-    }
-    th {
-      position: sticky;
-      top: 0;
-      background: #fff;
-    }
-    .muted {
-      opacity: 0.7;
-      font-size: 12px;
-    }
-    .msg {
-      margin: 10px 0;
-    }
-    button, a.btn {
-      padding: 10px 14px;
-      cursor: pointer;
-      display: inline-block;
-      text-decoration: none;
-      border: 1px solid #ccc;
-      background: #fff;
-      color: #000;
-      margin: 2px 4px 2px 0;
-    }
-    details {
-      margin: 8px 0;
-    }
-    .row2 {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .actions {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    @media (max-width: 760px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Neel Hiring Tool - Submissions</title>
+    <style>
+      body {
+        font-family: Arial;
+        max-width: 980px;
+        margin: 24px auto;
+        padding: 0 12px;
       }
-      thead {
-        display: none;
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
       }
-      tr {
-        border: 1px solid #eee;
-        border-radius: 8px;
+      input {
+        width: 100%;
         padding: 10px;
-        margin-bottom: 10px;
+        margin: 10px 0 14px;
+        box-sizing: border-box;
       }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
       td {
-        border: none;
-        padding: 6px 0;
+        border-bottom: 1px solid #eee;
+        padding: 10px;
+        text-align: left;
+        vertical-align: top;
       }
-      td::before {
-        content: attr(data-label) ": ";
-        font-weight: bold;
+      th {
+        position: sticky;
+        top: 0;
+        background: #fff;
       }
-    }
-  </style>
-</head>
+      .muted {
+        opacity: 0.7;
+        font-size: 12px;
+      }
+      .msg {
+        margin: 10px 0;
+      }
+      button,
+      a.btn {
+        padding: 10px 14px;
+        cursor: pointer;
+        display: inline-block;
+        text-decoration: none;
+        border: 1px solid #ccc;
+        background: #fff;
+        color: #000;
+        margin: 2px 4px 2px 0;
+      }
+      details {
+        margin: 8px 0;
+      }
+      .row2 {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      @media (max-width: 760px) {
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+        thead {
+          display: none;
+        }
+        tr {
+          border: 1px solid #eee;
+          border-radius: 8px;
+          padding: 10px;
+          margin-bottom: 10px;
+        }
+        td {
+          border: none;
+          padding: 6px 0;
+        }
+        td::before {
+          content: attr(data-label) ": ";
+          font-weight: bold;
+        }
+      }
+    </style>
+  </head>
 
-<body>
-
-  <div class="topbar">
-    <div>
-      <div style="font-weight:700;font-size:18px">Neel Hiring Tool</div>
-      <div class="muted">New candidate submissions</div>
-      <div id="authStatus" class="muted">Checking session…</div>
+  <body>
+    <div
+      style="
+        background: #fff3cd;
+        border-bottom: 1px solid #ffe69c;
+        padding: 10px;
+        text-align: center;
+        font-size: 14px;
+        position: sticky;
+        top: 0;
+        z-index: 9999;
+      "
+    >
+      ⚠️ <strong>Beta Version</strong> — This system is currently in testing.
+      Please use <strong>dummy candidate data only</strong>.
     </div>
+
+    <div class="topbar">
+      <div>
+        <div style="font-weight: 700; font-size: 18px">Neel Hiring Tool</div>
+        <div class="muted">New candidate submissions</div>
+        <div id="authStatus" class="muted">Checking session…</div>
+      </div>
+
+      <div class="row2">
+        <a class="btn" href="./candidates-list.html">View candidates</a>
+        <button id="logoutBtn">Logout</button>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="muted">
+      Search by name, email, phone, skills, notes, postcode, or status…
+    </div>
+    <input id="q" placeholder="Search submissions..." />
 
     <div class="row2">
-      <a class="btn" href="./candidates-list.html">View candidates</a>
-      <button id="logoutBtn">Logout</button>
+      <button id="refreshBtn">Refresh</button>
+      <button id="clearBtn">Clear search</button>
     </div>
-  </div>
 
-  <hr/>
+    <div class="msg" id="msg"></div>
 
-  <div class="muted">Search by name, email, phone, skills, notes, postcode, or status…</div>
-  <input id="q" placeholder="Search submissions..." />
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone / Email</th>
+          <th>Skills</th>
+          <th>Status</th>
+          <th>Postcode</th>
+          <th>Submitted</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
 
-  <div class="row2">
-    <button id="refreshBtn">Refresh</button>
-    <button id="clearBtn">Clear search</button>
-  </div>
+    <script type="module">
+      import { supabase } from "./supabaseClient.js";
 
-  <div class="msg" id="msg"></div>
+      const CV_BUCKET = "candidate-cvs";
 
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Phone / Email</th>
-        <th>Skills</th>
-        <th>Status</th>
-        <th>Postcode</th>
-        <th>Submitted</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="rows"></tbody>
-  </table>
+      const q = document.getElementById("q");
+      const msg = document.getElementById("msg");
+      const rowsEl = document.getElementById("rows");
+      const authStatus = document.getElementById("authStatus");
 
-  <script type="module">
-    import { supabase } from "./supabaseClient.js";
+      let all = [];
 
-    const CV_BUCKET = "candidate-cvs";
+      document.getElementById("logoutBtn").onclick = async () => {
+        await supabase.auth.signOut();
+        window.location.href = "auth.html";
+      };
 
-    const q = document.getElementById("q");
-    const msg = document.getElementById("msg");
-    const rowsEl = document.getElementById("rows");
-    const authStatus = document.getElementById("authStatus");
+      document.getElementById("clearBtn").onclick = () => {
+        q.value = "";
+        render(all);
+      };
 
-    let all = [];
-
-    document.getElementById("logoutBtn").onclick = async () => {
-      await supabase.auth.signOut();
-      window.location.href = "auth.html";
-    };
-
-    document.getElementById("clearBtn").onclick = () => {
-      q.value = "";
-      render(all);
-    };
-
-    function safe(s) {
-      return (s ?? "").toString();
-    }
-
-    function escapeHtml(str) {
-      return safe(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function fmtDate(iso) {
-      try {
-        return iso ? new Date(iso).toLocaleString() : "";
-      } catch {
-        return iso;
-      }
-    }
-
-    function matches(c, query) {
-      if (!query) return true;
-
-      const hay = [
-        c.full_name,
-        c.email,
-        c.phone,
-        c.skills,
-        c.notes,
-        c.postcode,
-        c.status,
-        c.nationality,
-        c.qualification
-      ].map(safe).join(" ").toLowerCase();
-
-      return hay.includes(query.toLowerCase());
-    }
-
-    async function getCvUrl(filePath) {
-      if (!filePath) return null;
-
-      const { data, error } = await supabase
-        .storage
-        .from(CV_BUCKET)
-        .createSignedUrl(filePath, 60 * 10); // 10 minutes
-
-      if (error) {
-        console.error("CV signed URL error:", error.message);
-        return null;
+      function safe(s) {
+        return (s ?? "").toString();
       }
 
-      return data?.signedUrl || null;
-    }
-
-    function render(list) {
-      rowsEl.innerHTML = "";
-
-      if (!list.length) {
-        rowsEl.innerHTML = `<tr><td colspan="7">No submissions found.</td></tr>`;
-        return;
+      function escapeHtml(str) {
+        return safe(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
       }
 
-      for (const c of list) {
-        const tr = document.createElement("tr");
-        const contact = [c.phone, c.email].filter(Boolean).join(" / ");
-        const submittedValue = c.submitted_at || c.created_at || "";
+      function fmtDate(iso) {
+        try {
+          return iso ? new Date(iso).toLocaleString() : "";
+        } catch {
+          return iso;
+        }
+      }
 
-        tr.innerHTML = `
+      function matches(c, query) {
+        if (!query) return true;
+
+        const hay = [
+          c.full_name,
+          c.email,
+          c.phone,
+          c.skills,
+          c.notes,
+          c.postcode,
+          c.status,
+          c.nationality,
+          c.qualification,
+        ]
+          .map(safe)
+          .join(" ")
+          .toLowerCase();
+
+        return hay.includes(query.toLowerCase());
+      }
+
+      async function getCvUrl(filePath) {
+        if (!filePath) return null;
+
+        const { data, error } = await supabase.storage
+          .from(CV_BUCKET)
+          .createSignedUrl(filePath, 60 * 10); // 10 minutes
+
+        if (error) {
+          console.error("CV signed URL error:", error.message);
+          return null;
+        }
+
+        return data?.signedUrl || null;
+      }
+
+      function render(list) {
+        rowsEl.innerHTML = "";
+
+        if (!list.length) {
+          rowsEl.innerHTML = `<tr><td colspan="7">No submissions found.</td></tr>`;
+          return;
+        }
+
+        for (const c of list) {
+          const tr = document.createElement("tr");
+          const contact = [c.phone, c.email].filter(Boolean).join(" / ");
+          const submittedValue = c.submitted_at || c.created_at || "";
+
+          tr.innerHTML = `
           <td data-label="Name">
             <b>${escapeHtml(c.full_name)}</b>
             <details>
@@ -263,202 +289,205 @@
           </td>
         `;
 
-        rowsEl.appendChild(tr);
-      }
-    }
-
-    async function requireSession() {
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error || !data?.session) {
-        window.location.href = "auth.html";
-        return null;
+          rowsEl.appendChild(tr);
+        }
       }
 
-      authStatus.textContent = `Logged in as: ${data.session.user.email}`;
-      return data.session;
-    }
+      async function requireSession() {
+        const { data, error } = await supabase.auth.getSession();
 
-    async function load() {
-      const session = await requireSession();
-      if (!session) return;
+        if (error || !data?.session) {
+          window.location.href = "auth.html";
+          return null;
+        }
 
-      msg.textContent = "Loading submissions...";
-
-      const { data, error } = await supabase
-        .from("candidate_submissions")
-        .select("*")
-        .order("submitted_at", { ascending: false })
-        .limit(200);
-
-      if (error) {
-        msg.textContent = "❌ " + error.message;
-        all = [];
-        render([]);
-        return;
+        authStatus.textContent = `Logged in as: ${data.session.user.email}`;
+        return data.session;
       }
 
-      all = data ?? [];
-      msg.textContent = `✅ Loaded ${all.length} submissions`;
-      render(all.filter(c => matches(c, q.value.trim())));
-    }
+      async function load() {
+        const session = await requireSession();
+        if (!session) return;
 
-    async function deleteSubmission(id) {
-      const ok = confirm("Delete this submission?");
-      if (!ok) return;
+        msg.textContent = "Loading submissions...";
 
-      msg.textContent = "Deleting...";
+        const { data, error } = await supabase
+          .from("candidate_submissions")
+          .select("*")
+          .order("submitted_at", { ascending: false })
+          .limit(200);
 
-      const { error } = await supabase
-        .from("candidate_submissions")
-        .delete()
-        .eq("id", id);
+        if (error) {
+          msg.textContent = "❌ " + error.message;
+          all = [];
+          render([]);
+          return;
+        }
 
-      if (error) {
-        msg.textContent = "❌ " + error.message;
-        return;
+        all = data ?? [];
+        msg.textContent = `✅ Loaded ${all.length} submissions`;
+        render(all.filter((c) => matches(c, q.value.trim())));
       }
 
-      msg.textContent = "✅ Submission deleted";
+      async function deleteSubmission(id) {
+        const ok = confirm("Delete this submission?");
+        if (!ok) return;
+
+        msg.textContent = "Deleting...";
+
+        const { error } = await supabase
+          .from("candidate_submissions")
+          .delete()
+          .eq("id", id);
+
+        if (error) {
+          msg.textContent = "❌ " + error.message;
+          return;
+        }
+
+        msg.textContent = "✅ Submission deleted";
+        await load();
+      }
+
+      async function approveSubmission(id) {
+        const session = await requireSession();
+        if (!session) return;
+
+        const submission = all.find((x) => x.id === id);
+
+        if (!submission) {
+          msg.textContent = "❌ Submission not found.";
+          return;
+        }
+
+        msg.textContent = "Approving submission...";
+
+        const candidatePayload = {
+          full_name: submission.full_name,
+          email: submission.email,
+          phone: submission.phone,
+          qualification: submission.qualification,
+          nationality: submission.nationality,
+          place_of_birth: submission.place_of_birth,
+          languages: submission.languages,
+          skills: submission.skills,
+          prior_experience: submission.prior_experience,
+          notes: submission.notes,
+          visa_status: submission.visa_status,
+          uk_residency_start: submission.uk_residency_start,
+          postcode: submission.postcode,
+          consent_to_share: submission.consent_to_share,
+          status: submission.status || "Applied",
+          cv_file_path: submission.cv_file_path || null,
+          created_by: session.user.id,
+        };
+
+        const { error: insertError } = await supabase
+          .from("candidates")
+          .insert(candidatePayload);
+
+        if (insertError) {
+          msg.textContent =
+            "❌ Error approving submission: " + insertError.message;
+          return;
+        }
+
+        const { error: deleteError } = await supabase
+          .from("candidate_submissions")
+          .delete()
+          .eq("id", id);
+
+        if (deleteError) {
+          msg.textContent =
+            "⚠️ Candidate created, but submission was not deleted: " +
+            deleteError.message;
+          return;
+        }
+
+        msg.textContent = "✅ Submission approved and moved to candidates.";
+        await load();
+      }
+
+      async function viewCv(id) {
+        const submission = all.find((x) => x.id === id);
+
+        if (!submission) {
+          msg.textContent = "❌ Submission not found.";
+          return;
+        }
+
+        if (!submission.cv_file_path) {
+          msg.textContent = "❌ No CV uploaded for this candidate.";
+          return;
+        }
+
+        msg.textContent = "Opening CV...";
+
+        const url = await getCvUrl(submission.cv_file_path);
+
+        if (!url) {
+          msg.textContent = "❌ Could not open CV.";
+          return;
+        }
+
+        window.open(url, "_blank");
+        msg.textContent = "✅ CV opened.";
+      }
+
+      async function downloadCv(id) {
+        const submission = all.find((x) => x.id === id);
+
+        if (!submission) {
+          msg.textContent = "❌ Submission not found.";
+          return;
+        }
+
+        if (!submission.cv_file_path) {
+          msg.textContent = "❌ No CV uploaded for this candidate.";
+          return;
+        }
+
+        msg.textContent = "Preparing CV download...";
+
+        const url = await getCvUrl(submission.cv_file_path);
+
+        if (!url) {
+          msg.textContent = "❌ Could not download CV.";
+          return;
+        }
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = submission.cv_file_path.split("/").pop() || "candidate-cv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        msg.textContent = "✅ CV download started.";
+      }
+
+      q.addEventListener("input", () => {
+        render(all.filter((c) => matches(c, q.value.trim())));
+      });
+
+      document.getElementById("refreshBtn").addEventListener("click", load);
+
+      rowsEl.addEventListener("click", (e) => {
+        const approveBtn = e.target.closest("button[data-approve]");
+        if (approveBtn) return approveSubmission(approveBtn.dataset.approve);
+
+        const delBtn = e.target.closest("button[data-del]");
+        if (delBtn) return deleteSubmission(delBtn.dataset.del);
+
+        const viewCvBtn = e.target.closest("button[data-viewcv]");
+        if (viewCvBtn) return viewCv(viewCvBtn.dataset.viewcv);
+
+        const downloadCvBtn = e.target.closest("button[data-downloadcv]");
+        if (downloadCvBtn) return downloadCv(downloadCvBtn.dataset.downloadcv);
+      });
+
+      await requireSession();
       await load();
-    }
-
-    async function approveSubmission(id) {
-      const session = await requireSession();
-      if (!session) return;
-
-      const submission = all.find(x => x.id === id);
-
-      if (!submission) {
-        msg.textContent = "❌ Submission not found.";
-        return;
-      }
-
-      msg.textContent = "Approving submission...";
-
-      const candidatePayload = {
-        full_name: submission.full_name,
-        email: submission.email,
-        phone: submission.phone,
-        qualification: submission.qualification,
-        nationality: submission.nationality,
-        place_of_birth: submission.place_of_birth,
-        languages: submission.languages,
-        skills: submission.skills,
-        prior_experience: submission.prior_experience,
-        notes: submission.notes,
-        visa_status: submission.visa_status,
-        uk_residency_start: submission.uk_residency_start,
-        postcode: submission.postcode,
-        consent_to_share: submission.consent_to_share,
-        status: submission.status || "Applied",
-        cv_file_path: submission.cv_file_path || null,
-        created_by: session.user.id
-      };
-
-      const { error: insertError } = await supabase
-        .from("candidates")
-        .insert(candidatePayload);
-
-      if (insertError) {
-        msg.textContent = "❌ Error approving submission: " + insertError.message;
-        return;
-      }
-
-      const { error: deleteError } = await supabase
-        .from("candidate_submissions")
-        .delete()
-        .eq("id", id);
-
-      if (deleteError) {
-        msg.textContent = "⚠️ Candidate created, but submission was not deleted: " + deleteError.message;
-        return;
-      }
-
-      msg.textContent = "✅ Submission approved and moved to candidates.";
-      await load();
-    }
-
-    async function viewCv(id) {
-      const submission = all.find(x => x.id === id);
-
-      if (!submission) {
-        msg.textContent = "❌ Submission not found.";
-        return;
-      }
-
-      if (!submission.cv_file_path) {
-        msg.textContent = "❌ No CV uploaded for this candidate.";
-        return;
-      }
-
-      msg.textContent = "Opening CV...";
-
-      const url = await getCvUrl(submission.cv_file_path);
-
-      if (!url) {
-        msg.textContent = "❌ Could not open CV.";
-        return;
-      }
-
-      window.open(url, "_blank");
-      msg.textContent = "✅ CV opened.";
-    }
-
-    async function downloadCv(id) {
-      const submission = all.find(x => x.id === id);
-
-      if (!submission) {
-        msg.textContent = "❌ Submission not found.";
-        return;
-      }
-
-      if (!submission.cv_file_path) {
-        msg.textContent = "❌ No CV uploaded for this candidate.";
-        return;
-      }
-
-      msg.textContent = "Preparing CV download...";
-
-      const url = await getCvUrl(submission.cv_file_path);
-
-      if (!url) {
-        msg.textContent = "❌ Could not download CV.";
-        return;
-      }
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = submission.cv_file_path.split("/").pop() || "candidate-cv";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      msg.textContent = "✅ CV download started.";
-    }
-
-    q.addEventListener("input", () => {
-      render(all.filter(c => matches(c, q.value.trim())));
-    });
-
-    document.getElementById("refreshBtn").addEventListener("click", load);
-
-    rowsEl.addEventListener("click", e => {
-      const approveBtn = e.target.closest("button[data-approve]");
-      if (approveBtn) return approveSubmission(approveBtn.dataset.approve);
-
-      const delBtn = e.target.closest("button[data-del]");
-      if (delBtn) return deleteSubmission(delBtn.dataset.del);
-
-      const viewCvBtn = e.target.closest("button[data-viewcv]");
-      if (viewCvBtn) return viewCv(viewCvBtn.dataset.viewcv);
-
-      const downloadCvBtn = e.target.closest("button[data-downloadcv]");
-      if (downloadCvBtn) return downloadCv(downloadCvBtn.dataset.downloadcv);
-    });
-
-    await requireSession();
-    await load();
-  </script>
-</body>
+    </script>
+  </body>
 </html>
