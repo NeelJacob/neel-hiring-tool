@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Select Company</title>
+    <style>
+      body {
+        font-family: Arial;
+        max-width: 720px;
+        margin: 24px auto;
+        padding: 0 12px;
+      }
+      .card {
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      input,
+      button {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 8px;
+      }
+      button {
+        cursor: pointer;
+      }
+      .muted {
+        color: #666;
+        font-size: 14px;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+      .pill {
+        font-size: 12px;
+        padding: 6px 10px;
+        border: 1px solid #eee;
+        border-radius: 999px;
+      }
+      .danger {
+        background: #fff5f5;
+        border-color: #ffd6d6;
+      }
+      .ok {
+        background: #f4fff6;
+        border-color: #c9f2d1;
+      }
+      code {
+        background: #f7f7f7;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="topbar">
+      <h2 style="margin: 0">Select Company</h2>
+      <button id="logoutBtn" style="width: auto">Logout</button>
+    </div>
+
+    <p class="muted" id="whoami">Checking session…</p>
+
+    <div class="card danger" id="envWarn" style="display: none">
+      <strong>Heads up:</strong>
+      <div class="muted" style="margin-top: 6px">
+        This page is being opened via <code>file://</code>. ES module imports can fail.
+        Use VS Code Live Server (http://localhost).
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Create a new company</h3>
+      <input id="orgName" placeholder="Company name (e.g. Acme Recruitment)" />
+      <button id="createBtn">Create Company</button>
+      <p id="createMsg" class="muted"></p>
+    </div>
+
+    <div class="card">
+      <h3>Your companies</h3>
+      <div id="orgList" class="muted">Loading…</div>
+    </div>
+
+    <script type="module">
+      import { supabase } from "./supabaseClient.js";
+
+      const whoamiEl = document.getElementById("whoami");
+      const orgListEl = document.getElementById("orgList");
+      const orgNameEl = document.getElementById("orgName");
+      const createBtn = document.getElementById("createBtn");
+      const createMsg = document.getElementById("createMsg");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const envWarn = document.getElementById("envWarn");
+
+      if (window.location.protocol === "file:") envWarn.style.display = "block";
+
+      function setActiveOrg(orgId) {
+        localStorage.setItem("active_org_id", orgId);
+      }
+
+      function formatError(err) {
+        if (!err) return "";
+        const parts = [
+          err.message ? `message=${err.message}` : null,
+          err.code ? `code=${err.code}` : null,
+          err.details ? `details=${err.details}` : null,
+          err.hint ? `hint=${err.hint}` : null,
+        ].filter(Boolean);
+        return parts.join(" | ") || JSON.stringify(err);
+      }
+
+      async function requireSessionOrRedirect() {
+        const { data, error } = await supabase.auth.getSession();
+        if (error || !data?.session) {
+          window.location.href = "auth.html";
+          return null;
+        }
+        whoamiEl.innerHTML = `Signed in as <span class="pill ok">${data.session.user.email}</span>`;
+        return data.session;
+      }
+
+      async function loadOrgs() {
+        orgListEl.textContent = "Loading…";
+
+        const { data, error } = await supabase
+          .from("recruiter_orgs")
+          .select("id,name,created_at")
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          orgListEl.textContent = "Error loading orgs: " + formatError(error);
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          orgListEl.innerHTML = "<div class='muted'>No companies yet. Create one above.</div>";
+          return;
+        }
+
+        const active = localStorage.getItem("active_org_id");
+
+        orgListEl.innerHTML = data
+          .map((org) => `
+            <div class="card" style="margin:10px 0;">
+              <div><strong>${org.name}</strong></div>
+              <div class="muted">${org.id}</div>
+              <button data-org="${org.id}">
+                ${active === org.id ? "Active ✅" : "Use this company"}
+              </button>
+            </div>
+          `)
+          .join("");
+
+        orgListEl.querySelectorAll("button[data-org]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            setActiveOrg(btn.dataset.org);
+            window.location.href = "candidates-list.html";
+          });
+        });
+      }
+
+      async function createOrg() {
+        const session = await requireSessionOrRedirect();
+        if (!session) return;
+
+        const name = orgNameEl.value.trim();
+        if (!name) {
+          createMsg.textContent = "❌ Enter a company name.";
+          return;
+        }
+
+        createBtn.disabled = true;
+        createMsg.textContent = "Creating…";
+
+        const { data: org, error: orgErr } = await supabase
+          .from("recruiter_orgs")
+          .insert({ name, owner_id: session.user.id })
+          .select("id")
+          .single();
+
+        if (orgErr) {
+          createBtn.disabled = false;
+          createMsg.textContent = "❌ Error creating org: " + formatError(orgErr);
+          return;
+        }
+
+        const { error: memErr } = await supabase
+          .from("org_members")
+          .insert({ org_id: org.id, user_id: session.user.id, role: "owner" });
+
+        if (memErr) {
+          createBtn.disabled = false;
+          createMsg.textContent = "❌ Org created but membership failed: " + formatError(memErr);
+          return;
+        }
+
+        setActiveOrg(org.id);
+        window.location.href = "candidates-list.html";
+      }
+
+      logoutBtn.addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        localStorage.removeItem("active_org_id");
+        window.location.href = "auth.html";
+      });
+
+      createBtn.addEventListener("click", createOrg);
+
+      // Boot
+      const session = await requireSessionOrRedirect();
+      if (!session) return;
+
+      // If active org set, go to candidates list
+      const activeOrgId = localStorage.getItem("active_org_id");
+      if (activeOrgId) {
+        window.location.href = "candidates-list.html";
+      } else {
+        await loadOrgs();
+      }
+    </script>
+  </body>
+</html>

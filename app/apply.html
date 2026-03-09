@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Apply - Neel Hiring Tool</title>
+    <style>
+      body {
+        font-family: Arial;
+        max-width: 720px;
+        margin: 24px auto;
+        padding: 0 12px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      label {
+        font-size: 14px;
+        display: inline-block;
+        margin-top: 6px;
+      }
+      input,
+      textarea,
+      select,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin: 6px 0 14px;
+        box-sizing: border-box;
+      }
+      textarea {
+        resize: vertical;
+      }
+      .small {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+      .msg {
+        margin-top: 12px;
+      }
+      @media (max-width: 640px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2 style="margin-bottom: 4px;">Apply Now</h2>
+    <div class="small">Fill in your details and submit your application.</div>
+
+    <div class="row">
+      <div>
+        <label for="full_name">Full name *</label>
+        <input id="full_name" placeholder="e.g., Aisha Khan" />
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input id="email" placeholder="e.g., aisha@email.com" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="phone">Phone</label>
+        <input id="phone" placeholder="e.g., 07..." />
+      </div>
+      <div>
+        <label for="nationality">Nationality</label>
+        <input id="nationality" placeholder="e.g., Indian" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="qualification">Qualification</label>
+        <input id="qualification" placeholder="e.g., BEng Software Engineering" />
+      </div>
+      <div>
+        <label for="place_of_birth">Place of birth</label>
+        <input id="place_of_birth" placeholder="e.g., Kochi" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="languages">Languages</label>
+        <input id="languages" placeholder="e.g., English, Malayalam" />
+      </div>
+      <div>
+        <label for="skills">Skills</label>
+        <input id="skills" placeholder="e.g., Python, SQL, FastAPI" />
+      </div>
+    </div>
+
+    <div>
+      <label for="prior_experience">Prior experience</label>
+      <textarea id="prior_experience" rows="3" placeholder="Any work history…"></textarea>
+    </div>
+
+    <div>
+      <label for="notes">Anything else you'd like to add?</label>
+      <textarea id="notes" rows="3" placeholder="Tell us anything important…"></textarea>
+    </div>
+
+    <div>
+      <label for="cv_file">Upload CV / Resume</label>
+      <input id="cv_file" type="file" accept=".pdf,.doc,.docx" />
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="visa_status">Visa status</label>
+        <input id="visa_status" placeholder="e.g., PSW (Graduate Route)" />
+      </div>
+      <div>
+        <label for="uk_residency_start">UK residency start</label>
+        <input id="uk_residency_start" type="date" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="postcode">Postcode</label>
+        <input id="postcode" placeholder="e.g., E14 5AB" />
+      </div>
+      <div>
+        <label for="consent_to_share">Consent to share</label>
+        <select id="consent_to_share">
+          <option value="false" selected>No</option>
+          <option value="true">Yes</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="submitBtn" type="button">Submit Application</button>
+    <div class="msg" id="msg"></div>
+
+    <script type="module">
+      import { supabase } from "./supabaseClient.js";
+
+      const msg = document.getElementById("msg");
+      const submitBtn = document.getElementById("submitBtn");
+
+      function val(id) {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : "";
+      }
+
+      function setDisabled(state) {
+        submitBtn.disabled = state;
+      }
+
+      submitBtn?.addEventListener("click", async () => {
+        const full_name = val("full_name");
+
+        if (!full_name) {
+          msg.textContent = "❌ Full name is required.";
+          return;
+        }
+
+        msg.textContent = "Submitting...";
+        setDisabled(true);
+
+        let cvFilePath = null;
+
+        const fileInput = document.getElementById("cv_file");
+        const file = fileInput?.files?.[0];
+
+        if (file) {
+          const ext = file.name.split(".").pop();
+          const safeName = full_name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+          const fileName = `${Date.now()}-${safeName}.${ext}`;
+          const storagePath = fileName;
+
+          const { error: uploadError } = await supabase.storage
+            .from("candidate-cvs")
+            .upload(storagePath, file);
+
+          if (uploadError) {
+            msg.textContent = "❌ CV upload failed: " + uploadError.message;
+            setDisabled(false);
+            return;
+          }
+
+          cvFilePath = storagePath;
+        }
+
+        const payload = {
+          full_name: full_name,
+          email: val("email") || null,
+          phone: val("phone") || null,
+          qualification: val("qualification") || null,
+          nationality: val("nationality") || null,
+          place_of_birth: val("place_of_birth") || null,
+          languages: val("languages") || null,
+          skills: val("skills") || null,
+          prior_experience: val("prior_experience") || null,
+          notes: val("notes") || null,
+          visa_status: val("visa_status") || null,
+          uk_residency_start: document.getElementById("uk_residency_start")?.value || null,
+          postcode: val("postcode") || null,
+          consent_to_share: document.getElementById("consent_to_share")?.value === "true",
+          status: "Applied",
+          cv_file_path: cvFilePath
+        };
+
+        const { error } = await supabase
+          .from("candidate_submissions")
+          .insert(payload);
+
+        if (error) {
+          msg.textContent = "❌ Error submitting form: " + error.message;
+          setDisabled(false);
+          return;
+        }
+
+        msg.textContent = "✅ Application submitted successfully.";
+
+        document.querySelectorAll("input, textarea").forEach((el) => {
+          if (el.type !== "date" && el.type !== "file") el.value = "";
+        });
+
+        if (fileInput) fileInput.value = "";
+        document.getElementById("consent_to_share").value = "false";
+        setDisabled(false);
+      });
+    </script>
+  </body>
+</html>

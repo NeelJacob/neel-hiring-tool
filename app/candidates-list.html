@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Neel Hiring Tool - Candidates</title>
+
+    <style>
+      body {
+        font-family: Arial;
+        max-width: 980px;
+        margin: 24px auto;
+        padding: 0 12px;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0 14px;
+        box-sizing: border-box;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border-bottom: 1px solid #eee;
+        padding: 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        position: sticky;
+        top: 0;
+        background: #fff;
+      }
+      .muted {
+        opacity: 0.7;
+        font-size: 12px;
+      }
+      .msg {
+        margin: 10px 0;
+      }
+      button,
+      a.btn {
+        padding: 10px 14px;
+        cursor: pointer;
+        display: inline-block;
+        text-decoration: none;
+        border: 1px solid #ccc;
+        background: #fff;
+        color: #000;
+        margin: 2px 4px 2px 0;
+      }
+      details {
+        margin: 8px 0;
+      }
+      .row2 {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      @media (max-width: 760px) {
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+        thead {
+          display: none;
+        }
+        tr {
+          border: 1px solid #eee;
+          border-radius: 8px;
+          padding: 10px;
+          margin-bottom: 10px;
+        }
+        td {
+          border: none;
+          padding: 6px 0;
+        }
+        td::before {
+          content: attr(data-label) ": ";
+          font-weight: bold;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="topbar">
+      <div>
+        <div style="font-weight: 700; font-size: 18px">Neel Hiring Tool</div>
+        <div class="muted">Candidate pipeline dashboard</div>
+        <div id="authStatus" class="muted">Checking session…</div>
+      </div>
+
+      <div class="row2">
+        <a class="btn" href="./candidate-form.html">+ Add candidate</a>
+        <a class="btn" href="./submissions.html">New applications</a>
+        <a class="btn" href="./qr.html">Generate QR</a>
+        <a class="btn" href="./pipeline.html">Pipeline board</a>
+        <button id="logoutBtn">Logout</button>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="muted">
+      Search by name, email, phone, skills, notes, visa status, postcode, or
+      status…
+    </div>
+    <input id="q" placeholder="Search..." />
+
+    <div class="row2">
+      <button id="refreshBtn">Refresh</button>
+      <button id="clearBtn">Clear search</button>
+    </div>
+
+    <div class="msg" id="msg"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone / Email</th>
+          <th>Skills</th>
+          <th>Status</th>
+          <th>Visa</th>
+          <th>Postcode</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+
+    <script type="module">
+      import { supabase } from "./supabaseClient.js";
+
+      const CV_BUCKET = "candidate-cvs";
+
+      const q = document.getElementById("q");
+      const msg = document.getElementById("msg");
+      const rowsEl = document.getElementById("rows");
+      const authStatus = document.getElementById("authStatus");
+
+      document.getElementById("logoutBtn").onclick = async () => {
+        await supabase.auth.signOut();
+        window.location.href = "auth.html";
+      };
+
+      document.getElementById("clearBtn").onclick = () => {
+        q.value = "";
+        render(all);
+      };
+
+      let all = [];
+
+      function safe(s) {
+        return (s ?? "").toString();
+      }
+
+      function escapeHtml(str) {
+        return safe(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function fmtDate(iso) {
+        try {
+          return iso ? new Date(iso).toLocaleString() : "";
+        } catch {
+          return iso;
+        }
+      }
+
+      function matches(c, query) {
+        if (!query) return true;
+
+        const hay = [
+          c.full_name,
+          c.email,
+          c.phone,
+          c.skills,
+          c.languages,
+          c.notes,
+          c.visa_status,
+          c.postcode,
+          c.nationality,
+          c.qualification,
+          c.status,
+        ]
+          .map(safe)
+          .join(" ")
+          .toLowerCase();
+
+        return hay.includes(query.toLowerCase());
+      }
+
+      async function getCvUrl(filePath) {
+        if (!filePath) return null;
+
+        const { data, error } = await supabase.storage
+          .from(CV_BUCKET)
+          .createSignedUrl(filePath, 60 * 10);
+
+        if (error) {
+          console.error("CV signed URL error:", error.message);
+          return null;
+        }
+
+        return data?.signedUrl || null;
+      }
+
+      function render(list) {
+        rowsEl.innerHTML = "";
+
+        if (!list.length) {
+          rowsEl.innerHTML = `<tr><td colspan="8">No candidates found.</td></tr>`;
+          return;
+        }
+
+        for (const c of list) {
+          const tr = document.createElement("tr");
+          const contact = [c.phone, c.email].filter(Boolean).join(" / ");
+
+          tr.innerHTML = `
+      <td data-label="Name">
+        <b>${escapeHtml(c.full_name)}</b>
+        <details>
+          <summary>More</summary>
+          <div class="muted"><b>Nationality:</b> ${escapeHtml(c.nationality)}</div>
+          <div class="muted"><b>Qualification:</b> ${escapeHtml(c.qualification)}</div>
+          <div class="muted"><b>Place of birth:</b> ${escapeHtml(c.place_of_birth)}</div>
+          <div class="muted"><b>Languages:</b> ${escapeHtml(c.languages)}</div>
+          <div class="muted"><b>Experience:</b> ${escapeHtml(c.prior_experience)}</div>
+          <div class="muted"><b>Notes:</b> ${escapeHtml(c.notes) || "—"}</div>
+          <div class="muted"><b>Consent to share:</b> ${c.consent_to_share ? "Yes" : "No"}</div>
+          <div class="muted"><b>CV:</b> ${c.cv_file_path ? escapeHtml(c.cv_file_path) : "No CV uploaded"}</div>
+          <div class="muted"><b>ID:</b> ${escapeHtml(c.id)}</div>
+        </details>
+      </td>
+
+      <td data-label="Contact">${contact ? escapeHtml(contact) : "<span class='muted'>—</span>"}</td>
+
+      <td data-label="Skills">${escapeHtml(c.skills) || "<span class='muted'>—</span>"}</td>
+
+      <td data-label="Status">${escapeHtml(c.status) || "Applied"}</td>
+
+      <td data-label="Visa">${escapeHtml(c.visa_status) || "<span class='muted'>—</span>"}</td>
+
+      <td data-label="Postcode">${escapeHtml(c.postcode) || "<span class='muted'>—</span>"}</td>
+
+      <td data-label="Created">${fmtDate(c.created_at)}</td>
+
+      <td data-label="Actions">
+        <div class="actions">
+          <button data-edit="${escapeHtml(c.id)}">Edit</button>
+          <button data-del="${escapeHtml(c.id)}">Delete</button>
+          ${
+            c.cv_file_path
+              ? `<button data-viewcv="${escapeHtml(c.id)}">View CV</button>
+                 <button data-downloadcv="${escapeHtml(c.id)}">Download CV</button>`
+              : `<span class="muted">No CV</span>`
+          }
+        </div>
+      </td>
+    `;
+
+          rowsEl.appendChild(tr);
+        }
+      }
+
+      async function requireSession() {
+        const { data, error } = await supabase.auth.getSession();
+
+        if (error || !data?.session) {
+          window.location.href = "auth.html";
+          return null;
+        }
+
+        authStatus.textContent = `Logged in as: ${data.session.user.email}`;
+        return data.session;
+      }
+
+      async function load() {
+        const session = await requireSession();
+        if (!session) return;
+
+        msg.textContent = "Loading...";
+
+        const { data, error } = await supabase
+          .from("candidates")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(200);
+
+        if (error) {
+          msg.textContent = "❌ " + error.message;
+          all = [];
+          render([]);
+          return;
+        }
+
+        all = data ?? [];
+        msg.textContent = `✅ Loaded ${all.length} candidates`;
+        render(all.filter((c) => matches(c, q.value.trim())));
+      }
+
+      async function deleteCandidate(id) {
+        const ok = confirm("Delete this candidate?");
+        if (!ok) return;
+
+        msg.textContent = "Deleting...";
+
+        const { error } = await supabase
+          .from("candidates")
+          .delete()
+          .eq("id", id);
+
+        if (error) {
+          msg.textContent = "❌ " + error.message;
+          return;
+        }
+
+        msg.textContent = "✅ Deleted";
+        await load();
+      }
+
+      async function editCandidate(id) {
+        const c = all.find((x) => x.id === id);
+
+        if (!c) {
+          msg.textContent = "Candidate not found.";
+          return;
+        }
+
+        const ask = (label, current) => {
+          const r = prompt(label, current ?? "");
+          if (r === null) return null;
+          return r.trim();
+        };
+
+        const full_name = ask("Full name", c.full_name);
+        if (full_name === null) return;
+
+        const email = ask("Email", c.email);
+        if (email === null) return;
+
+        const phone = ask("Phone", c.phone);
+        if (phone === null) return;
+
+        const skills = ask("Skills", c.skills);
+        if (skills === null) return;
+
+        const notes = ask("Recruiter notes", c.notes);
+        if (notes === null) return;
+
+        const status = ask(
+          "Status (Applied / Screening / Interview / Offer / Hired / Rejected)",
+          c.status || "Applied"
+        );
+        if (status === null) return;
+
+        const visa_status = ask("Visa status", c.visa_status);
+        if (visa_status === null) return;
+
+        const postcode = ask("Postcode", c.postcode);
+        if (postcode === null) return;
+
+        msg.textContent = "Updating...";
+
+        const { error } = await supabase
+          .from("candidates")
+          .update({
+            full_name,
+            email: email || null,
+            phone: phone || null,
+            skills: skills || null,
+            notes: notes || null,
+            status: status || "Applied",
+            visa_status: visa_status || null,
+            postcode: postcode || null,
+          })
+          .eq("id", id);
+
+        if (error) {
+          msg.textContent = "❌ " + error.message;
+          return;
+        }
+
+        msg.textContent = "✅ Updated";
+        await load();
+      }
+
+      async function viewCv(id) {
+        const candidate = all.find((x) => x.id === id);
+
+        if (!candidate) {
+          msg.textContent = "❌ Candidate not found.";
+          return;
+        }
+
+        if (!candidate.cv_file_path) {
+          msg.textContent = "❌ No CV uploaded for this candidate.";
+          return;
+        }
+
+        msg.textContent = "Opening CV...";
+
+        const url = await getCvUrl(candidate.cv_file_path);
+
+        if (!url) {
+          msg.textContent = "❌ Could not open CV.";
+          return;
+        }
+
+        window.open(url, "_blank");
+        msg.textContent = "✅ CV opened.";
+      }
+
+      async function downloadCv(id) {
+        const candidate = all.find((x) => x.id === id);
+
+        if (!candidate) {
+          msg.textContent = "❌ Candidate not found.";
+          return;
+        }
+
+        if (!candidate.cv_file_path) {
+          msg.textContent = "❌ No CV uploaded for this candidate.";
+          return;
+        }
+
+        msg.textContent = "Preparing CV download...";
+
+        const url = await getCvUrl(candidate.cv_file_path);
+
+        if (!url) {
+          msg.textContent = "❌ Could not download CV.";
+          return;
+        }
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = candidate.cv_file_path.split("/").pop() || "candidate-cv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        msg.textContent = "✅ CV download started.";
+      }
+
+      q.addEventListener("input", () => {
+        render(all.filter((c) => matches(c, q.value.trim())));
+      });
+
+      document.getElementById("refreshBtn").addEventListener("click", load);
+
+      rowsEl.addEventListener("click", (e) => {
+        const delBtn = e.target.closest("button[data-del]");
+        if (delBtn) return deleteCandidate(delBtn.dataset.del);
+
+        const editBtn = e.target.closest("button[data-edit]");
+        if (editBtn) return editCandidate(editBtn.dataset.edit);
+
+        const viewCvBtn = e.target.closest("button[data-viewcv]");
+        if (viewCvBtn) return viewCv(viewCvBtn.dataset.viewcv);
+
+        const downloadCvBtn = e.target.closest("button[data-downloadcv]");
+        if (downloadCvBtn) return downloadCv(downloadCvBtn.dataset.downloadcv);
+      });
+
+      await requireSession();
+      await load();
+    </script>
+  </body>
+</html>

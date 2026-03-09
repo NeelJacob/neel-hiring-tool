@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Neel Hiring Tool - Add Candidate</title>
+    <style>
+      body {
+        font-family: Arial;
+        max-width: 720px;
+        margin: 24px auto;
+        padding: 0 12px;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      label {
+        font-size: 14px;
+        display: inline-block;
+        margin-top: 6px;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 10px;
+        margin: 6px 0 14px;
+        box-sizing: border-box;
+      }
+      textarea {
+        resize: vertical;
+      }
+      button,
+      a.btn {
+        padding: 10px 14px;
+        cursor: pointer;
+        display: inline-block;
+        text-decoration: none;
+        border: 1px solid #ccc;
+        background: #fff;
+        color: #000;
+      }
+      .msg {
+        margin-top: 12px;
+      }
+      .small {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+      @media (max-width: 640px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="topbar">
+      <div>
+        <h2 style="margin: 0">Neel Hiring Tool</h2>
+        <div class="small">Add Candidate</div>
+      </div>
+      <a class="btn" href="./candidates-list.html">View candidates →</a>
+    </div>
+
+    <p class="small">Fill the form and save the candidate to the cloud.</p>
+
+    <div class="row">
+      <div>
+        <label for="full_name">Full name *</label>
+        <input
+          id="full_name"
+          name="full_name"
+          placeholder="e.g., Aisha Khan"
+          autocomplete="name"
+        />
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          placeholder="e.g., aisha@email.com"
+          autocomplete="email"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="phone">Phone</label>
+        <input
+          id="phone"
+          name="phone"
+          placeholder="e.g., 07..."
+          autocomplete="tel"
+        />
+      </div>
+      <div>
+        <label for="nationality">Nationality</label>
+        <input
+          id="nationality"
+          name="nationality"
+          placeholder="e.g., Indian"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="qualification">Qualification</label>
+        <input
+          id="qualification"
+          name="qualification"
+          placeholder="e.g., BEng Software Engineering"
+        />
+      </div>
+      <div>
+        <label for="place_of_birth">Place of birth</label>
+        <input
+          id="place_of_birth"
+          name="place_of_birth"
+          placeholder="e.g., Kochi"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="languages">Languages</label>
+        <input
+          id="languages"
+          name="languages"
+          placeholder="e.g., English, Malayalam"
+        />
+      </div>
+      <div>
+        <label for="skills">Skills</label>
+        <input
+          id="skills"
+          name="skills"
+          placeholder="e.g., Python, SQL, FastAPI"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label for="prior_experience">Prior experience</label>
+      <textarea
+        id="prior_experience"
+        name="prior_experience"
+        rows="3"
+        placeholder="Any work history…"
+      ></textarea>
+    </div>
+
+    <div>
+      <label for="notes">Recruiter notes</label>
+      <textarea
+        id="notes"
+        name="notes"
+        rows="3"
+        placeholder="Add recruiter notes…"
+      ></textarea>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="visa_status">Visa status</label>
+        <input
+          id="visa_status"
+          name="visa_status"
+          placeholder="e.g., PSW (Graduate Route)"
+        />
+      </div>
+      <div>
+        <label for="uk_residency_start">UK residency start</label>
+        <input id="uk_residency_start" name="uk_residency_start" type="date" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="postcode">Postcode</label>
+        <input
+          id="postcode"
+          name="postcode"
+          placeholder="e.g., E14 5AB"
+          autocomplete="postal-code"
+        />
+      </div>
+      <div>
+        <label for="consent_to_share">Consent to share</label>
+        <select id="consent_to_share" name="consent_to_share">
+          <option value="false" selected>No</option>
+          <option value="true">Yes</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="saveBtn" type="button">Save to Cloud</button>
+    <div class="msg" id="msg" role="status" aria-live="polite"></div>
+
+    <script type="module">
+      import { supabase } from "./supabaseClient.js";
+
+      const msg = document.getElementById("msg");
+      const saveBtn = document.getElementById("saveBtn");
+
+      function val(id) {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : "";
+      }
+
+      function setDisabled(state) {
+        saveBtn.disabled = state;
+      }
+
+      async function requireSessionOrRedirect() {
+        const { data, error } = await supabase.auth.getSession();
+
+        if (error || !data?.session) {
+          window.location.href = "auth.html";
+          return null;
+        }
+
+        return data.session;
+      }
+
+      saveBtn.addEventListener("click", async () => {
+        const session = await requireSessionOrRedirect();
+        if (!session) return;
+
+        const full_name = val("full_name");
+
+        if (!full_name) {
+          msg.textContent = "❌ Full name is required.";
+          return;
+        }
+
+        msg.textContent = "Saving candidate...";
+        setDisabled(true);
+
+        const payload = {
+          full_name: full_name,
+          email: val("email") || null,
+          phone: val("phone") || null,
+          qualification: val("qualification") || null,
+          nationality: val("nationality") || null,
+          place_of_birth: val("place_of_birth") || null,
+          languages: val("languages") || null,
+          skills: val("skills") || null,
+          prior_experience: val("prior_experience") || null,
+          notes: val("notes") || null,
+          visa_status: val("visa_status") || null,
+          uk_residency_start:
+            document.getElementById("uk_residency_start")?.value || null,
+          postcode: val("postcode") || null,
+          consent_to_share:
+            document.getElementById("consent_to_share")?.value === "true",
+          status: "Applied",
+          created_by: session.user.id,
+        };
+
+        const { error } = await supabase.from("candidates").insert(payload);
+
+        if (error) {
+          msg.textContent = "❌ Error saving candidate: " + error.message;
+          setDisabled(false);
+          return;
+        }
+
+        msg.textContent = "✅ Candidate saved successfully.";
+
+        document.querySelectorAll("input, textarea").forEach((el) => {
+          if (el.type !== "date") el.value = "";
+        });
+
+        const consent = document.getElementById("consent_to_share");
+        if (consent) consent.value = "false";
+
+        setDisabled(false);
+      });
+
+      await requireSessionOrRedirect();
+    </script>
+  </body>
+</html>

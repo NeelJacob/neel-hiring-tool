@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 520px;
+      margin: 40px auto;
+      padding: 0 12px;
+    }
+    input, button {
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 8px 0;
+    }
+    .muted {
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Login</h2>
+
+  <input id="email" placeholder="email" autocomplete="email" />
+  <input id="password" type="password" placeholder="password" autocomplete="current-password" />
+
+  <button id="loginBtn">Login</button>
+
+  <p id="msg" class="muted"></p>
+
+  <script type="module">
+    import { supabase } from "./supabaseClient.js";
+
+    const msg = document.getElementById("msg");
+    const loginBtn = document.getElementById("loginBtn");
+
+    // If user already logged in → go to dashboard
+    const { data } = await supabase.auth.getSession();
+    if (data?.session) {
+      window.location.href = "candidates-list.html";
+    }
+
+    loginBtn.addEventListener("click", async () => {
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        msg.textContent = "❌ Please enter email and password.";
+        return;
+      }
+
+      msg.textContent = "Signing in...";
+      loginBtn.disabled = true;
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        msg.textContent = "❌ " + error.message;
+        loginBtn.disabled = false;
+        return;
+      }
+
+      msg.textContent = "✅ Logged in!";
+      window.location.href = "candidates-list.html";
+
+    });
+
+  </script>
+
+</body>
+</html>
