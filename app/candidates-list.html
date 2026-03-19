@@ -6,74 +6,299 @@
     <title>Neel Hiring Tool - Candidates</title>
 
     <style>
-      body {
-        font-family: Arial;
-        max-width: 980px;
-        margin: 24px auto;
-        padding: 0 12px;
+      * {
+        box-sizing: border-box;
       }
+
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 16px 32px;
+        background: #f6f7fb;
+        color: #111827;
+      }
+
+      .beta-banner {
+        background: #fff3cd;
+        border: 1px solid #ffe69c;
+        padding: 12px 16px;
+        text-align: center;
+        font-size: 14px;
+        position: sticky;
+        top: 0;
+        z-index: 9999;
+        border-radius: 0 0 10px 10px;
+        margin-bottom: 20px;
+      }
+
+      .page-shell {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+      }
+
       .topbar {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        gap: 12px;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px;
+        flex-wrap: wrap;
       }
-      input {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0 14px;
-        box-sizing: border-box;
+
+      .brand-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 6px;
       }
-      table {
-        width: 100%;
-        border-collapse: collapse;
+
+      .subtitle {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 6px;
       }
-      th,
-      td {
-        border-bottom: 1px solid #eee;
-        padding: 10px;
-        text-align: left;
-        vertical-align: top;
+
+      .auth-status {
+        color: #6b7280;
+        font-size: 13px;
       }
-      th {
-        position: sticky;
-        top: 0;
-        background: #fff;
-      }
-      .muted {
-        opacity: 0.7;
-        font-size: 12px;
-      }
-      .msg {
-        margin: 10px 0;
-      }
-      button,
-      a.btn {
-        padding: 10px 14px;
-        cursor: pointer;
-        display: inline-block;
-        text-decoration: none;
-        border: 1px solid #ccc;
-        background: #fff;
-        color: #000;
-        margin: 2px 4px 2px 0;
-      }
-      details {
-        margin: 8px 0;
-      }
+
       .row2 {
         display: flex;
         gap: 10px;
         align-items: center;
         flex-wrap: wrap;
       }
+
+      a.btn,
+      button.btn {
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        background: #ffffff;
+        color: #111827;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: 0.2s ease;
+      }
+
+      a.btn:hover,
+      button.btn:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+      }
+
+      .btn-primary {
+        background: #111827 !important;
+        color: #ffffff !important;
+        border-color: #111827 !important;
+      }
+
+      .btn-primary:hover {
+        background: #1f2937 !important;
+        border-color: #1f2937 !important;
+      }
+
+      .btn-danger {
+        background: #fff5f5 !important;
+        color: #b91c1c !important;
+        border-color: #fecaca !important;
+      }
+
+      .toolbar {
+        padding: 20px;
+      }
+
+      .search-label {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 14px;
+        margin: 0 0 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        background: #fff;
+        font-size: 14px;
+        outline: none;
+      }
+
+      input:focus {
+        border-color: #111827;
+        box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+      }
+
+      .msg {
+        margin-top: 8px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .table-card {
+        overflow: hidden;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 980px;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid #eef0f3;
+        padding: 14px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #f9fafb;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 700;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
+      tbody tr:hover {
+        background: #fafafa;
+      }
+
+      .candidate-name {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .muted {
+        color: #6b7280;
+        font-size: 12px;
+      }
+
+      .details-box {
+        margin-top: 8px;
+      }
+
+      details {
+        margin-top: 8px;
+      }
+
+      details summary {
+        cursor: pointer;
+        color: #111827;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .detail-list {
+        margin-top: 10px;
+        display: grid;
+        gap: 6px;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1px solid #e5e7eb;
+        background: #f9fafb;
+        color: #111827;
+      }
+
+      .status-applied {
+        background: #eff6ff;
+        color: #1d4ed8;
+        border-color: #bfdbfe;
+      }
+
+      .status-screening {
+        background: #f5f3ff;
+        color: #6d28d9;
+        border-color: #ddd6fe;
+      }
+
+      .status-interview {
+        background: #ecfeff;
+        color: #0f766e;
+        border-color: #a5f3fc;
+      }
+
+      .status-offer {
+        background: #f0fdf4;
+        color: #15803d;
+        border-color: #bbf7d0;
+      }
+
+      .status-hired {
+        background: #dcfce7;
+        color: #166534;
+        border-color: #86efac;
+      }
+
+      .status-rejected {
+        background: #fef2f2;
+        color: #b91c1c;
+        border-color: #fecaca;
+      }
+
       .actions {
         display: flex;
-        gap: 6px;
+        gap: 8px;
         flex-wrap: wrap;
       }
 
+      .small-btn {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+      }
+
+      .empty-state {
+        padding: 30px 20px;
+        text-align: center;
+        color: #6b7280;
+        font-size: 14px;
+      }
+
+      footer {
+        margin-top: 26px;
+        padding: 20px;
+        text-align: center;
+        font-size: 13px;
+        color: #6b7280;
+        border-top: 1px solid #e5e7eb;
+      }
+
       @media (max-width: 760px) {
+        body {
+          padding: 0 12px 24px;
+        }
+
+        .topbar,
+        .toolbar {
+          padding: 16px;
+        }
+
         table,
         thead,
         tbody,
@@ -82,89 +307,95 @@
         tr {
           display: block;
         }
+
+        table {
+          min-width: 100%;
+        }
+
         thead {
           display: none;
         }
+
         tr {
-          border: 1px solid #eee;
-          border-radius: 8px;
-          padding: 10px;
-          margin-bottom: 10px;
+          border-bottom: 1px solid #eef0f3;
+          padding: 12px 14px;
         }
+
         td {
           border: none;
-          padding: 6px 0;
+          padding: 8px 0;
         }
+
         td::before {
           content: attr(data-label) ": ";
-          font-weight: bold;
+          font-weight: 700;
+          color: #374151;
+        }
+
+        .actions {
+          margin-top: 8px;
         }
       }
     </style>
   </head>
 
   <body>
-    <div
-      style="
-        background: #fff3cd;
-        border-bottom: 1px solid #ffe69c;
-        padding: 10px;
-        text-align: center;
-        font-size: 14px;
-        position: sticky;
-        top: 0;
-        z-index: 9999;
-      "
-    >
+    <div class="beta-banner">
       ⚠️ <strong>Beta Version</strong> — This system is currently in testing.
       Please use <strong>dummy candidate data only</strong>.
     </div>
-    <div class="topbar">
-      <div>
-        <div style="font-weight: 700; font-size: 18px">Neel Hiring Tool</div>
-        <div class="muted">Candidate pipeline dashboard</div>
-        <div id="authStatus" class="muted">Checking session…</div>
+
+    <div class="page-shell">
+      <div class="card topbar">
+        <div>
+          <div class="brand-title">Neel Hiring Tool</div>
+          <div class="subtitle">Candidate pipeline dashboard</div>
+          <div id="authStatus" class="auth-status">Checking session…</div>
+        </div>
+
+        <div class="row2">
+          <a class="btn btn-primary" href="./candidate-form.html">+ Add candidate</a>
+          <a class="btn" href="./submissions.html">New applications</a>
+          <a class="btn" href="./qr.html">Generate QR</a>
+          <a class="btn" href="./pipeline.html">Pipeline board</a>
+          <button class="btn" id="logoutBtn">Logout</button>
+        </div>
       </div>
 
-      <div class="row2">
-        <a class="btn" href="./candidate-form.html">+ Add candidate</a>
-        <a class="btn" href="./submissions.html">New applications</a>
-        <a class="btn" href="./qr.html">Generate QR</a>
-        <a class="btn" href="./pipeline.html">Pipeline board</a>
-        <button id="logoutBtn">Logout</button>
+      <div class="card toolbar">
+        <div class="search-label">
+          Search by name, email, phone, skills, notes, visa status, postcode, or status
+        </div>
+        <input id="q" placeholder="Search candidates..." />
+
+        <div class="row2">
+          <button class="btn" id="refreshBtn">Refresh</button>
+          <button class="btn" id="clearBtn">Clear search</button>
+        </div>
+
+        <div class="msg" id="msg"></div>
+      </div>
+
+      <div class="card table-card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Phone / Email</th>
+                <th>Skills</th>
+                <th>Status</th>
+                <th>Visa</th>
+                <th>Postcode</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
       </div>
     </div>
-
-    <hr />
-
-    <div class="muted">
-      Search by name, email, phone, skills, notes, visa status, postcode, or
-      status…
-    </div>
-    <input id="q" placeholder="Search..." />
-
-    <div class="row2">
-      <button id="refreshBtn">Refresh</button>
-      <button id="clearBtn">Clear search</button>
-    </div>
-
-    <div class="msg" id="msg"></div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Phone / Email</th>
-          <th>Skills</th>
-          <th>Status</th>
-          <th>Visa</th>
-          <th>Postcode</th>
-          <th>Created</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="rows"></tbody>
-    </table>
 
     <script type="module">
       import { supabase } from "./supabaseClient.js";
@@ -176,6 +407,8 @@
       const rowsEl = document.getElementById("rows");
       const authStatus = document.getElementById("authStatus");
 
+      let all = [];
+
       document.getElementById("logoutBtn").onclick = async () => {
         await supabase.auth.signOut();
         window.location.href = "auth.html";
@@ -185,8 +418,6 @@
         q.value = "";
         render(all);
       };
-
-      let all = [];
 
       function safe(s) {
         return (s ?? "").toString();
@@ -207,6 +438,19 @@
         } catch {
           return iso;
         }
+      }
+
+      function getStatusClass(status) {
+        const value = safe(status).toLowerCase();
+
+        if (value === "applied") return "status-badge status-applied";
+        if (value === "screening") return "status-badge status-screening";
+        if (value === "interview") return "status-badge status-interview";
+        if (value === "offer") return "status-badge status-offer";
+        if (value === "hired") return "status-badge status-hired";
+        if (value === "rejected") return "status-badge status-rejected";
+
+        return "status-badge";
       }
 
       function matches(c, query) {
@@ -251,56 +495,80 @@
         rowsEl.innerHTML = "";
 
         if (!list.length) {
-          rowsEl.innerHTML = `<tr><td colspan="8">No candidates found.</td></tr>`;
+          rowsEl.innerHTML = `
+            <tr>
+              <td colspan="8">
+                <div class="empty-state">No candidates found.</div>
+              </td>
+            </tr>
+          `;
           return;
         }
 
         for (const c of list) {
           const tr = document.createElement("tr");
           const contact = [c.phone, c.email].filter(Boolean).join(" / ");
+          const status = c.status || "Applied";
 
           tr.innerHTML = `
-      <td data-label="Name">
-        <b>${escapeHtml(c.full_name)}</b>
-        <details>
-          <summary>More</summary>
-          <div class="muted"><b>Nationality:</b> ${escapeHtml(c.nationality)}</div>
-          <div class="muted"><b>Qualification:</b> ${escapeHtml(c.qualification)}</div>
-          <div class="muted"><b>Place of birth:</b> ${escapeHtml(c.place_of_birth)}</div>
-          <div class="muted"><b>Languages:</b> ${escapeHtml(c.languages)}</div>
-          <div class="muted"><b>Experience:</b> ${escapeHtml(c.prior_experience)}</div>
-          <div class="muted"><b>Notes:</b> ${escapeHtml(c.notes) || "—"}</div>
-          <div class="muted"><b>Consent to share:</b> ${c.consent_to_share ? "Yes" : "No"}</div>
-          <div class="muted"><b>CV:</b> ${c.cv_file_path ? escapeHtml(c.cv_file_path) : "No CV uploaded"}</div>
-          <div class="muted"><b>ID:</b> ${escapeHtml(c.id)}</div>
-        </details>
-      </td>
+            <td data-label="Name">
+              <div class="candidate-name">${escapeHtml(c.full_name || "Unnamed Candidate")}</div>
+              <div class="muted">${escapeHtml(c.email || "No email")}</div>
 
-      <td data-label="Contact">${contact ? escapeHtml(contact) : "<span class='muted'>—</span>"}</td>
+              <details class="details-box">
+                <summary>More details</summary>
+                <div class="detail-list">
+                  <div class="muted"><b>Nationality:</b> ${escapeHtml(c.nationality) || "—"}</div>
+                  <div class="muted"><b>Qualification:</b> ${escapeHtml(c.qualification) || "—"}</div>
+                  <div class="muted"><b>Place of birth:</b> ${escapeHtml(c.place_of_birth) || "—"}</div>
+                  <div class="muted"><b>Languages:</b> ${escapeHtml(c.languages) || "—"}</div>
+                  <div class="muted"><b>Experience:</b> ${escapeHtml(c.prior_experience) || "—"}</div>
+                  <div class="muted"><b>Notes:</b> ${escapeHtml(c.notes) || "—"}</div>
+                  <div class="muted"><b>Consent to share:</b> ${c.consent_to_share ? "Yes" : "No"}</div>
+                  <div class="muted"><b>CV:</b> ${c.cv_file_path ? escapeHtml(c.cv_file_path) : "No CV uploaded"}</div>
+                  <div class="muted"><b>ID:</b> ${escapeHtml(c.id)}</div>
+                </div>
+              </details>
+            </td>
 
-      <td data-label="Skills">${escapeHtml(c.skills) || "<span class='muted'>—</span>"}</td>
+            <td data-label="Contact">
+              ${contact ? escapeHtml(contact) : "<span class='muted'>—</span>"}
+            </td>
 
-      <td data-label="Status">${escapeHtml(c.status) || "Applied"}</td>
+            <td data-label="Skills">
+              ${escapeHtml(c.skills) || "<span class='muted'>—</span>"}
+            </td>
 
-      <td data-label="Visa">${escapeHtml(c.visa_status) || "<span class='muted'>—</span>"}</td>
+            <td data-label="Status">
+              <span class="${getStatusClass(status)}">${escapeHtml(status)}</span>
+            </td>
 
-      <td data-label="Postcode">${escapeHtml(c.postcode) || "<span class='muted'>—</span>"}</td>
+            <td data-label="Visa">
+              ${escapeHtml(c.visa_status) || "<span class='muted'>—</span>"}
+            </td>
 
-      <td data-label="Created">${fmtDate(c.created_at)}</td>
+            <td data-label="Postcode">
+              ${escapeHtml(c.postcode) || "<span class='muted'>—</span>"}
+            </td>
 
-      <td data-label="Actions">
-        <div class="actions">
-          <button data-edit="${escapeHtml(c.id)}">Edit</button>
-          <button data-del="${escapeHtml(c.id)}">Delete</button>
-          ${
-            c.cv_file_path
-              ? `<button data-viewcv="${escapeHtml(c.id)}">View CV</button>
-                 <button data-downloadcv="${escapeHtml(c.id)}">Download CV</button>`
-              : `<span class="muted">No CV</span>`
-          }
-        </div>
-      </td>
-    `;
+            <td data-label="Created">
+              ${fmtDate(c.created_at)}
+            </td>
+
+            <td data-label="Actions">
+              <div class="actions">
+                <a class="btn small-btn" href="./candidate.html?id=${encodeURIComponent(c.id)}">View</a>
+                <button class="btn small-btn" data-edit="${escapeHtml(c.id)}">Edit</button>
+                <button class="btn small-btn btn-danger" data-del="${escapeHtml(c.id)}">Delete</button>
+                ${
+                  c.cv_file_path
+                    ? `<button class="btn small-btn" data-viewcv="${escapeHtml(c.id)}">View CV</button>
+                       <button class="btn small-btn" data-downloadcv="${escapeHtml(c.id)}">Download CV</button>`
+                    : `<span class="muted">No CV</span>`
+                }
+              </div>
+            </td>
+          `;
 
           rowsEl.appendChild(tr);
         }
@@ -322,7 +590,7 @@
         const session = await requireSession();
         if (!session) return;
 
-        msg.textContent = "Loading...";
+        msg.textContent = "Loading candidates...";
 
         const { data, error } = await supabase
           .from("candidates")
@@ -346,7 +614,7 @@
         const ok = confirm("Delete this candidate?");
         if (!ok) return;
 
-        msg.textContent = "Deleting...";
+        msg.textContent = "Deleting candidate...";
 
         const { error } = await supabase
           .from("candidates")
@@ -358,7 +626,7 @@
           return;
         }
 
-        msg.textContent = "✅ Deleted";
+        msg.textContent = "✅ Candidate deleted";
         await load();
       }
 
@@ -366,7 +634,7 @@
         const c = all.find((x) => x.id === id);
 
         if (!c) {
-          msg.textContent = "Candidate not found.";
+          msg.textContent = "❌ Candidate not found.";
           return;
         }
 
@@ -393,7 +661,7 @@
 
         const status = ask(
           "Status (Applied / Screening / Interview / Offer / Hired / Rejected)",
-          c.status || "Applied",
+          c.status || "Applied"
         );
         if (status === null) return;
 
@@ -403,7 +671,7 @@
         const postcode = ask("Postcode", c.postcode);
         if (postcode === null) return;
 
-        msg.textContent = "Updating...";
+        msg.textContent = "Updating candidate...";
 
         const { error } = await supabase
           .from("candidates")
@@ -424,7 +692,7 @@
           return;
         }
 
-        msg.textContent = "✅ Updated";
+        msg.textContent = "✅ Candidate updated";
         await load();
       }
 
@@ -509,20 +777,10 @@
       await requireSession();
       await load();
     </script>
-    <footer
-      style="
-        margin-top: 40px;
-        padding: 20px;
-        text-align: center;
-        font-size: 13px;
-        color: #666;
-        border-top: 1px solid #eee;
-      "
-    >
+
+    <footer>
       Neel Hiring Tool (Beta)<br />
-
       Built by <strong>Neel Jacob Jogy</strong><br />
-
       Feedback / Issues:<br />
       <a href="mailto:neeljacob2002@gmail.com">neeljacob2002@gmail.com</a>
     </footer>
